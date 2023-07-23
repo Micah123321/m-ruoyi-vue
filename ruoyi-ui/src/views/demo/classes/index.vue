@@ -131,6 +131,58 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
+        <el-divider content-position="center">单信息</el-divider>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDemoStudent">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteDemoStudent">删除</el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="demoStudentList" :row-class-name="rowDemoStudentIndex" @selection-change="handleDemoStudentSelectionChange" ref="demoStudent">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="学生名称" prop="studentName" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.studentName" placeholder="请输入学生名称" />
+            </template>
+          </el-table-column>
+          <el-table-column label="年龄" prop="studentAge" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.studentAge" placeholder="请输入年龄" />
+            </template>
+          </el-table-column>
+          <el-table-column label="性别" prop="studentSex" width="150">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.studentSex" placeholder="请选择性别">
+                <el-option
+                  v-for="dict in dict.type.sys_user_sex"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="生日" prop="studentBirthday" width="240">
+            <template slot-scope="scope">
+              <el-date-picker clearable v-model="scope.row.studentBirthday" type="date" value-format="yyyy-MM-dd" placeholder="请选择生日" />
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" prop="STATUS" width="150">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.STATUS" placeholder="请选择状态">
+                <el-option
+                  v-for="dict in dict.type.sys_common_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -145,12 +197,15 @@ import { listClasses, getClasses, delClasses, addClasses, updateClasses } from "
 
 export default {
   name: "Classes",
+  dicts: ['sys_common_status', 'sys_user_sex'],
   data() {
     return {
       // 遮罩层
       loading: true,
       // 选中数组
       ids: [],
+      // 子表选中数据
+      checkedDemoStudent: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -161,6 +216,8 @@ export default {
       total: 0,
       // 主子表格数据
       classesList: [],
+      // 单表格数据
+      demoStudentList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -214,6 +271,7 @@ export default {
         delFlag: null,
         remark: null
       };
+      this.demoStudentList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -244,6 +302,7 @@ export default {
       const classesId = row.classesId || this.ids
       getClasses(classesId).then(response => {
         this.form = response.data;
+        this.demoStudentList = response.data.demoStudentList;
         this.open = true;
         this.title = "修改主子";
       });
@@ -252,6 +311,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.demoStudentList = this.demoStudentList;
           if (this.form.classesId != null) {
             updateClasses(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -277,6 +337,37 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
+    },
+	/** 单序号 */
+    rowDemoStudentIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** 单添加按钮操作 */
+    handleAddDemoStudent() {
+      let obj = {};
+      obj.studentName = "";
+      obj.studentAge = "";
+      obj.studentSex = "";
+      obj.studentBirthday = "";
+      obj.STATUS = "";
+      obj.remark = "";
+      this.demoStudentList.push(obj);
+    },
+    /** 单删除按钮操作 */
+    handleDeleteDemoStudent() {
+      if (this.checkedDemoStudent.length == 0) {
+        this.$modal.msgError("请先选择要删除的单数据");
+      } else {
+        const demoStudentList = this.demoStudentList;
+        const checkedDemoStudent = this.checkedDemoStudent;
+        this.demoStudentList = demoStudentList.filter(function(item) {
+          return checkedDemoStudent.indexOf(item.index) == -1
+        });
+      }
+    },
+    /** 复选框选中数据 */
+    handleDemoStudentSelectionChange(selection) {
+      this.checkedDemoStudent = selection.map(item => item.index)
     },
     /** 导出按钮操作 */
     handleExport() {

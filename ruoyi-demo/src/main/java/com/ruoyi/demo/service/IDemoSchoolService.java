@@ -7,8 +7,8 @@ import com.ruoyi.demo.domain.DemoSchool;
 /**
  * 树Service接口
  * 
- * @author metaee
- * @date 2023-07-06
+ * @author Micah
+ * @date 2023-07-23
  */
 public interface IDemoSchoolService extends IService<DemoSchool> {
     /**

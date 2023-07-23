@@ -25,6 +25,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="性别" prop="studentSex">
+        <el-select v-model="queryParams.studentSex" placeholder="请选择性别" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_user_sex"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="生日" prop="studentBirthday">
         <el-date-picker clearable
           v-model="queryParams.studentBirthday"
@@ -32,6 +42,16 @@
           value-format="yyyy-MM-dd"
           placeholder="请选择生日">
         </el-date-picker>
+      </el-form-item>
+      <el-form-item label="状态" prop="STATUS">
+        <el-select v-model="queryParams.STATUS" placeholder="请选择状态" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_common_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -91,13 +111,21 @@
       <el-table-column label="所属班级ID" align="center" prop="classesId" />
       <el-table-column label="学生名称" align="center" prop="studentName" />
       <el-table-column label="年龄" align="center" prop="studentAge" />
-      <el-table-column label="性别" align="center" prop="studentSex" />
+      <el-table-column label="性别" align="center" prop="studentSex">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.studentSex"/>
+        </template>
+      </el-table-column>
       <el-table-column label="生日" align="center" prop="studentBirthday" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.studentBirthday, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="STATUS" />
+      <el-table-column label="状态" align="center" prop="STATUS">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_common_status" :value="scope.row.STATUS"/>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -139,6 +167,16 @@
         <el-form-item label="年龄" prop="studentAge">
           <el-input v-model="form.studentAge" placeholder="请输入年龄" />
         </el-form-item>
+        <el-form-item label="性别" prop="studentSex">
+          <el-select v-model="form.studentSex" placeholder="请选择性别">
+            <el-option
+              v-for="dict in dict.type.sys_user_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="生日" prop="studentBirthday">
           <el-date-picker clearable
             v-model="form.studentBirthday"
@@ -146,6 +184,15 @@
             value-format="yyyy-MM-dd"
             placeholder="请选择生日">
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="状态" prop="STATUS">
+          <el-radio-group v-model="form.STATUS">
+            <el-radio
+              v-for="dict in dict.type.sys_common_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="删除标志" prop="delFlag">
           <el-input v-model="form.delFlag" placeholder="请输入删除标志" />
@@ -167,6 +214,7 @@ import { listStudent, getStudent, delStudent, addStudent, updateStudent } from "
 
 export default {
   name: "Student",
+  dicts: ['sys_common_status', 'sys_user_sex'],
   data() {
     return {
       // 遮罩层

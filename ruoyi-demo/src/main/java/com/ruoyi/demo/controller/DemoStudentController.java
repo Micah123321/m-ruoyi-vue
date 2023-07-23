@@ -24,9 +24,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 单Controller
- * 
- * @author metaee
- * @date 2023-07-06
+ *
+ * @author Micah
+ * @date 2023-07-23
  */
 @RestController
 @RequestMapping("/demo/student")

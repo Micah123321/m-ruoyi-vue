@@ -31,7 +31,7 @@ captcha:
   fontName:
   # 字体大小
   fontSize: 25
-  
+
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
@@ -70,7 +70,7 @@ spring:
   messages:
     # 国际化资源文件路径
     basename: i18n/messages
-  profiles: 
+  profiles:
     active: dev
   # 文件上传
   servlet:
@@ -93,7 +93,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码
-    password: 
+    password:
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -114,7 +114,7 @@ token:
     # 令牌密钥
     secret: abcdefghijklmnopqrstuvwxyz
     # 令牌有效期（默认30分钟）
-    expireTime: 30
+    expireTime: 3600
 
 # MyBatis Plus配置
 mybatis-plus:
@@ -131,9 +131,10 @@ mybatis-plus:
       logic-delete-value: 1
       # 逻辑未删除值
       logic-not-delete-value: 0
-    banner: false  
+      logic-delete-field: is_del
+    banner: false
   # 加载原生全局的配置文件
-  # configLocation: classpath:mybatis/mybatis-config.xml  
+  # configLocation: classpath:mybatis/mybatis-config.xml
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -142,13 +143,13 @@ mybatis-plus:
   configuration-properties:
     prefix:
     blobType: BLOB
-    boolValue: TRUE  
+    boolValue: TRUE
 
 # PageHelper分页插件
-pagehelper: 
+pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
-  params: count=countSql 
+  params: count=countSql
 
 # Swagger配置
 swagger:
@@ -158,7 +159,7 @@ swagger:
   pathMapping: /dev-api
 
 # 防止XSS攻击
-xss: 
+xss:
   # 过滤开关
   enabled: true
   # 排除链接（多个用逗号分隔）

@@ -15,8 +15,8 @@ import com.ruoyi.demo.service.IDemoSchoolService;
 /**
  * 树Service业务层处理
  * 
- * @author metaee
- * @date 2023-07-06
+ * @author Micah
+ * @date 2023-07-23
  */
 @Service
 public class DemoSchoolServiceImpl extends ServiceImpl<DemoSchoolMapper, DemoSchool> implements IDemoSchoolService {

@@ -34,7 +34,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -52,43 +52,25 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="info"
           plain
-          icon="el-icon-edit"
+          icon="el-icon-sort"
           size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['demo:school:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['demo:school:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['demo:school:export']"
-        >导出</el-button>
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="schoolList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="schoolId" />
-      <el-table-column label="父编号id" align="center" prop="parentId" />
+    <el-table
+      v-if="refreshTable"
+      v-loading="loading"
+      :data="schoolList"
+      row-key="schoolId"
+      :default-expand-all="isExpandAll"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+    >
+      <el-table-column label="父编号id" prop="parentId" />
       <el-table-column label="祖级列表" align="center" prop="ancestors" />
       <el-table-column label="显示顺序" align="center" prop="orderNum" />
       <el-table-column label="学生名称" align="center" prop="schoolName" />
@@ -106,6 +88,13 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-plus"
+            @click="handleAdd(scope.row)"
+            v-hasPermi="['demo:school:add']"
+          >新增</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['demo:school:remove']"
@@ -113,20 +102,12 @@
         </template>
       </el-table-column>
     </el-table>
-    
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
 
     <!-- 添加或修改树对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="父编号id" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入父编号id" />
+          <treeselect v-model="form.parentId" :options="schoolOptions" :normalizer="normalizer" placeholder="请选择父编号id" />
         </el-form-item>
         <el-form-item label="显示顺序" prop="orderNum">
           <el-input v-model="form.orderNum" placeholder="请输入显示顺序" />
@@ -151,33 +132,34 @@
 
 <script>
 import { listSchool, getSchool, delSchool, addSchool, updateSchool } from "@/api/demo/school";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "School",
+  components: {
+    Treeselect
+  },
   data() {
     return {
       // 遮罩层
       loading: true,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
       // 显示搜索条件
       showSearch: true,
-      // 总条数
-      total: 0,
       // 树表格数据
       schoolList: [],
+      // 树树选项
+      schoolOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否展开，默认全部展开
+      isExpandAll: true,
+      // 重新渲染表格状态
+      refreshTable: true,
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
         parentId: null,
         ancestors: null,
         orderNum: null,
@@ -199,9 +181,28 @@ export default {
     getList() {
       this.loading = true;
       listSchool(this.queryParams).then(response => {
-        this.schoolList = response.rows;
-        this.total = response.total;
+        this.schoolList = this.handleTree(response.data, "schoolId", "parentId");
         this.loading = false;
+      });
+    },
+    /** 转换树数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.schoolId,
+        label: node.schoolName,
+        children: node.children
+      };
+    },
+	/** 查询树下拉树结构 */
+    getTreeselect() {
+      listSchool().then(response => {
+        this.schoolOptions = [];
+        const data = { schoolId: 0, schoolName: '顶级节点', children: [] };
+        data.children = this.handleTree(response.data, "schoolId", "parentId");
+        this.schoolOptions.push(data);
       });
     },
     // 取消按钮
@@ -229,7 +230,6 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
       this.getList();
     },
     /** 重置按钮操作 */
@@ -237,23 +237,34 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.schoolId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
-    },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd(row) {
       this.reset();
+      this.getTreeselect();
+      if (row != null && row.schoolId) {
+        this.form.parentId = row.schoolId;
+      } else {
+        this.form.parentId = 0;
+      }
       this.open = true;
       this.title = "添加树";
+    },
+    /** 展开/折叠操作 */
+    toggleExpandAll() {
+      this.refreshTable = false;
+      this.isExpandAll = !this.isExpandAll;
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const schoolId = row.schoolId || this.ids
-      getSchool(schoolId).then(response => {
+      this.getTreeselect();
+      if (row != null) {
+        this.form.parentId = row.schoolId;
+      }
+      getSchool(row.schoolId).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改树";
@@ -281,19 +292,12 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const schoolIds = row.schoolId || this.ids;
-      this.$modal.confirm('是否确认删除树编号为"' + schoolIds + '"的数据项？').then(function() {
-        return delSchool(schoolIds);
+      this.$modal.confirm('是否确认删除树编号为"' + row.schoolId + '"的数据项？').then(function() {
+        return delSchool(row.schoolId);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('demo/school/export', {
-        ...this.queryParams
-      }, `school_${new Date().getTime()}.xlsx`)
     }
   }
 };

@@ -6,9 +6,9 @@
           <div slot="header" class="clearfix">
             <h2>关于项目</h2>
           </div>
-          <p>metaee-boot快速开发平台</p>
+          <p>m-ruoyi-vue快速开发平台</p>
           <p>
-            基于开源项目“RuoYi-Vue”优化改造，追求快速开发，一切向效率看齐，重构优化前后端的代码。平台将持续升级，持续完善。欢迎友友们收藏和点赞。
+            m-ruoyi-vue快速开发平台基于开源项目“RuoYi-Vue”优化改造，追求快速开发，一切向效率看齐，重构优化前后端的代码。平台将持续升级，持续完善。欢迎star和fork。
           </p>
           <p>
             <b>当前版本:</b> <span>v{{ version }}</span>

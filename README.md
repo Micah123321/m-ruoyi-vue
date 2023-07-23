@@ -1,6 +1,6 @@
 ## 平台简介
 
-metaee-boot快速开发平台基于开源项目“RuoYi-Vue”优化改造，追求快速开发，一切向效率看齐，重构优化前后端的代码。平台将持续升级，持续完善。欢迎友友们收藏和点赞。
+m-ruoyi-vue快速开发平台基于开源项目“RuoYi-Vue”优化改造，追求快速开发，一切向效率看齐，重构优化前后端的代码。平台将持续升级，持续完善。欢迎star和fork。
 
 * 感谢 [RuoYi-Vue](https://gitee.com/y_project/RuoYi-Vue)
 

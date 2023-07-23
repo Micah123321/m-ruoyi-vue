@@ -9,7 +9,7 @@ export default {
   name: 'RuoYiGit',
   data() {
     return {
-      url: 'https://gitee.com/metaee/metaee-boot'
+      url: 'https://github.com/Micah123321/m-ruoyi-vue'
     }
   },
   methods: {

@@ -65,3 +65,29 @@ ruoyi
 5. 进入系统工具,代码生成
 6. 修改构造器配置包名,表名
 7. 导入想要使用的表
+
+## 数据库参数
+- 单表需要包含  
+```sql
+`create_by` VARCHAR(255) DEFAULT NULL COMMENT '创建者',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` VARCHAR(255) DEFAULT NULL COMMENT '更新者',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remark` VARCHAR(255) DEFAULT NULL COMMENT '备注',
+  `del_flag` TINYINT(1) DEFAULT '0' COMMENT '删除标志',
+```
+- 树表需要包含 
+
+
+```sql
+  `parent_id` int DEFAULT '0' COMMENT '所属分类ID',
+  `ancestors` varchar(255) NOT NULL COMMENT '祖级列表',
+  `order_num` int DEFAULT '0' COMMENT '排序',
+  `create_by` varchar(255) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` varchar(255) DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `del_flag` tinyint(1) DEFAULT '0' COMMENT '删除标志',
+
+```

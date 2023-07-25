@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.ruoyi</groupId>
-		<artifactId>ruoyi</artifactId>
+		<artifactId>m-ruoyi-vue</artifactId>
 		<version>3.8.5</version>
 	</parent>
 	<artifactId>ruoyi-demo</artifactId>
@@ -17,7 +17,7 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
-        
+
         <!-- 日志记录 -->
         <dependency>
             <groupId>com.ruoyi</groupId>

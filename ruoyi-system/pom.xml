@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ruoyi</artifactId>
+        <artifactId>m-ruoyi-vue</artifactId>
         <groupId>com.ruoyi</groupId>
         <version>3.8.5</version>
     </parent>
@@ -22,19 +22,19 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
-        
+
         <!-- 登录安全认证 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-security</artifactId>
         </dependency>
-        
+
         <!-- web服务 -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
-        
+
         <!-- 各模块聚合api -->
         <dependency>
             <groupId>com.ruoyi</groupId>
